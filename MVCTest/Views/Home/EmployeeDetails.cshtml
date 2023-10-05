@@ -1,0 +1,227 @@
+﻿@{
+    ViewData["Title"] = "Employee Master";
+
+    bool isEditing = bool.Parse(ViewData["isEditing"].ToString());
+    var employeeEndpoint = ViewData["WebAPIHost"] + "/api/Employee";
+    var currentPage = 1;
+    var dfltMaxPaging = 5;
+    var pageTitle =  isEditing ? "Update Employee Details" : "Employee Details";
+    var employeeDetails = ViewData["employeeDetails"] as EmployeeViewModel;
+
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="white-box">
+            <h3 class="box-title">@pageTitle</h3>
+            <form  id="employeeForm" method="post">
+                 <div class="card">
+                <div class="card-body">
+              
+                    <h5 class="card-title">Employee Info</h5>
+                     <div class="form-floating mb-3">
+                      <input type="text" class="form-control required-field form-fields"  id="name" placeholder="Name" name="name" required @(!isEditing ? "disabled" : "") value="@employeeDetails.Name">
+                      <label for="name">Name</label>
+                    </div>
+                     <div class="form-floating mb-3">
+                      <input type="email" class="form-control required-field form-fields" id="email" placeholder="Email Address" name="email" required @(!isEditing ? "disabled" : "") value="@employeeDetails.Email">
+                      <label for="email">Email Address</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                      <input type="text" class="form-control required-field form-fields" id="employeeNumber" placeholder="Employee Number" name="employeeNumber" required @(!isEditing ? "disabled" : "") value="@employeeDetails.EmployeeNumber">
+                      <label for="employeeNumber">Employee Number</label>
+                    </div>         
+
+                     <br/>
+
+                   <h5 class="card-title">Other Details</h5>
+
+                    <div class="form-floating mb-3">
+                      <input type="text" class="form-control required-field form-fields" id="position" placeholder="Position" name="position" @(!isEditing ? "disabled" : "") value="@employeeDetails.Position">
+                      <label for="name">Position</label>
+                    </div>
+
+                      <select class="form-select mb-3 required-field form-fields"  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Department" name="department" @(!isEditing ? "disabled" : "") value="@employeeDetails.Department">
+                          <option selected disabled>Select Department</option>
+                          <option value="IT">IT</option>
+                          <option value="HR">HR</option>
+                          <option value="Accounting">Accounting</option>
+                          <option value="Development">Development</option>
+                    </select>
+
+                     <div class="form-floating mb-3">
+                      <input type="date" class="form-control required-field form-fields" id="dateHired" placeholder="dateHired" name="dateHired" @(!isEditing ? "disabled" : "") value="@employeeDetails.DateHired">
+                      <label for="dateHired">Date Hired</label>
+                    </div>
+
+
+                     <select class="form-select mb-3 required-field form-fields"  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Gender" name="gender" @(!isEditing ? "disabled" : "") value="@employeeDetails.Gender">
+                          <option selected disabled>Select Gender</option>
+                          <option value="Male">Male</option>
+                          <option value="Female">Female</option>
+                    </select>
+
+                    <div class="form-floating mb-3">
+                      <input type="date" class="form-control form-fields" id="dateHired" placeholder="birthDate" name="birthDate" @(!isEditing ? "disabled" : "") value="@employeeDetails.Birthdate">
+                      <label for="birthDate">Birthdate</label>
+                    </div>
+
+                     <div class="mb-3">
+                      <label for="address" class="form-label">Address</label>
+                      <textarea class="form-control form-fields" id="address" rows="3" name="address"  @(!isEditing ? "disabled" : "")>@employeeDetails.Address</textarea>
+                    </div>
+
+                     <div class="form-floating mb-3">
+                      <input type="text" class="form-control form-fields" id="contactNumber" placeholder="Contact Number" name="contactNumber" @(!isEditing ? "disabled" : "") value="@employeeDetails.ContactNumber">
+                      <label for="contactNumber">Contact Number</label>
+                    </div>    
+                    
+                     <select class="form-select mb-3 form-fields"  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Marital Status" name="maritalStatus" @(!isEditing ? "disabled" : "") value="@employeeDetails.MaritalStatus">
+                          <option selected disabled>Select Marital Status</option>
+                          <option value="Single">Single</option>
+                          <option value="Married">Married</option>
+                          <option value="Widowed">Widowed</option>
+                          <option value="Divorced">Divorced</option>
+                    </select>
+
+                 
+                     <div class="form-floating mb-3">
+                      <input type="text" class="form-control form-fields" id="governmentId" placeholder="Goverment Id" name="governmentId" @(!isEditing ? "disabled" : "") value="@employeeDetails.GovernmentId">
+                      <label for="governmentId">Goverment Id</label>
+                    </div>    
+
+
+                      <div class="mb-3">
+                      <label for="emergencyContact" class="form-label">Emergency Contact</label>
+                      <textarea class="form-control form-fields" id="emergencyContact" rows="3" name="emergencyContact"  @(!isEditing ? "disabled" : "")>@employeeDetails.EmergencyContact</textarea>
+                    </div>
+
+            
+                </div>
+
+     
+
+                </div>
+
+
+                <div class="d-flex align-items-center justify-content-end flex-fill mb-3  @(!isEditing ? "d-none" : "")">
+                   <div class="p-2">
+                   <button type="submit" class="btn btn-primary" id="submitBtn">Save changes</button>
+                   </div>
+               </div>
+
+            </form>
+               
+               
+
+  
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+@section Scripts{
+<script>
+    
+const parent = this;
+var invalidFields = [];
+var isFormChanged = false;
+
+
+$(".required-field").on('keyup keypress blur change', function(e) {
+    // e.type is the type of event fired
+    let target = e.target;
+    parent.invalidFields  = []
+
+ 
+    let value = target.value;
+    if(value == null || value == ''){
+        $(`#${target.id}`).addClass("is-invalid");
+    }else{
+        $(`#${target.id}`).removeClass("is-invalid");
+    }
+
+    parent.isFormChanged = true;
+    parent.getInvalidFields();
+});
+
+function getInvalidFields(){
+    parent.invalidFields  = []
+
+    var fields = $(".form-fields");
+
+    fields.each(function( index ) {
+        let itemField = $( this );
+        console.log("getInvalidFields")
+      
+        itemField.removeClass("is-invalid");
+
+     
+        if(itemField.hasClass("required-field")){
+            let value = itemField[0].value;
+            if(value == null || value == ''){
+                itemField.addClass("is-invalid");
+            }else{
+                itemField.removeClass("is-invalid");
+            }
+        }
+
+
+        if(itemField.hasClass("is-invalid")){
+            parent.invalidFields.push(itemField[0].name)
+        }
+    });
+
+}
+
+$("#submitBtn").click(function(){
+    parent.getInvalidFields();
+  if(parent.invalidFields.length || !isFormChanged){
+      let alertMessage = "Please fill up the required fields!\n";
+      parent.invalidFields.forEach(item => {
+          alertMessage += `${item}\n`
+      })
+       alert(alertMessage) 
+
+       return;
+  }
+
+  let payload = $("#employeeForm").serializeArray();
+
+    $.ajax({
+        headers: { 
+            'Accept': 'application/json',
+            'Content-Type': 'application/json' 
+        },
+        type: 'PUT',
+        url: "@employeeEndpoint" + "/@ViewData["employeeId"]",
+        data: JSON.stringify(payload),
+        dataType: 'json',
+        success: (resp) => {
+            if(resp){
+                alert("Employee Succssfully Updated!")
+
+
+                 setTimeout(()=> {
+                    location.reload();                 
+                 }, 1500);
+            }
+        },
+        error: (err) => {
+               alert(err.responseText)        
+        }
+    });
+
+});
+
+
+
+</script>
+
+
+}

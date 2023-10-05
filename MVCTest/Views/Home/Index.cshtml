@@ -1,0 +1,451 @@
+﻿@{
+    ViewData["Title"] = "Employee Master";
+    var employeeEndpoint = ViewData["WebAPIHost"] + "/api/Employee";
+    var currentPage = 1;
+    var dfltMaxPaging = 5;
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="white-box">
+            <h3 class="box-title">Basic Table</h3>
+            <div class="d-flex align-items-center flex-row mb-3">
+                <div class="p-2 flex-grow-1">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addEmployee">
+                        Add
+                    </button>          
+                </div>
+
+                <div class="p-2">
+                    <div class="input-group">
+                        <input id="searchField" type="text" class="form-control" placeholder="Search Here">
+                        <button id="searchBtn" class="btn btn-outline-secondary" type="button">Search</button>
+                    </div>
+                </div>
+             
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped text-nowrap">
+                    <thead>
+                        <tr>
+                            <th class="border-top-0">Name</th>
+                            <th class="border-top-0">Email</th>
+                            <th class="border-top-0">Employee Number</th>
+                            <th class="border-top-0 col-md-1 text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                          
+                    </tbody>
+                </table>
+                <div class="comment-footer d-flex align-items-center justify-content-end">
+                    <div class="flex-grow-1">
+                        <p id="result-count"></p>
+                    </div>
+                    <ul class="pagination justify-content-end" id="pagination">
+         
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<div class="modal fade" id="addEmployee" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      
+        <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">Add Employee</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+       <form  style="overflow-y: scroll !important" id="addEmployeeForm" method="post">
+
+          <div class="modal-body">
+              <div class="card">
+                <div class="card-body">
+              
+                    <h5 class="card-title">Employee Info</h5>
+                     <div class="form-floating mb-3">
+                      <input type="text" class="form-control required-field form-fields" id="name" placeholder="Name" name="name" required>
+                      <label for="name">Name</label>
+                    </div>
+                     <div class="form-floating mb-3">
+                      <input type="email" class="form-control required-field form-fields" id="email" placeholder="Email Address" name="email" required>
+                      <label for="email">Email Address</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                      <input type="text" class="form-control required-field form-fields" id="employeeNumber" placeholder="Employee Number" name="employeeNumber" required>
+                      <label for="employeeNumber">Employee Number</label>
+                    </div>         
+
+                     <br/>
+
+                   <h5 class="card-title">Other Details</h5>
+
+                    <div class="form-floating mb-3">
+                      <input type="text" class="form-control required-field form-fields" id="position" placeholder="Position" name="position">
+                      <label for="name">Position</label>
+                    </div>
+
+                      <select class="form-select mb-3 required-field form-fields"  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Department" name="department">
+                          <option selected disabled>Select Department</option>
+                          <option value="IT">IT</option>
+                          <option value="HR">HR</option>
+                          <option value="Accounting">Accounting</option>
+                          <option value="Development">Development</option>
+                    </select>
+
+                     <div class="form-floating mb-3">
+                      <input type="date" class="form-control required-field form-fields" id="dateHired" placeholder="dateHired" name="dateHired">
+                      <label for="dateHired">Date Hired</label>
+                    </div>
+
+
+                     <select class="form-select mb-3 required-field form-fields"  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Gender" name="gender">
+                          <option selected disabled>Select Gender</option>
+                          <option value="Male">Male</option>
+                          <option value="Female">Female</option>
+                    </select>
+
+                    <div class="form-floating mb-3">
+                      <input type="date" class="form-control form-fields" id="dateHired" placeholder="birthDate" name="birthDate">
+                      <label for="birthDate">Birthdate</label>
+                    </div>
+
+                     <div class="mb-3">
+                      <label for="address" class="form-label">Address</label>
+                      <textarea class="form-control form-fields" id="address" rows="3" name="address"></textarea>
+                    </div>
+
+                     <div class="form-floating mb-3">
+                      <input type="text" class="form-control form-fields" id="contactNumber" placeholder="Contact Number" name="contactNumber">
+                      <label for="contactNumber">Contact Number</label>
+                    </div>    
+                    
+                     <select class="form-select mb-3 form-fields"  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Marital Status" name="maritalStatus">
+                          <option selected disabled>Select Marital Status</option>
+                          <option value="Single">Single</option>
+                          <option value="Married">Married</option>
+                          <option value="Widowed">Widowed</option>
+                          <option value="Divorced">Divorced</option>
+                    </select>
+
+                 
+                     <div class="form-floating mb-3">
+                      <input type="text" class="form-control form-fields" id="governmentId" placeholder="Goverment Id" name="governmentId">
+                      <label for="governmentId">Goverment Id</label>
+                    </div>    
+
+
+                      <div class="mb-3">
+                      <label for="emergencyContact" class="form-label">Emergency Contact</label>
+                      <textarea class="form-control form-fields" id="emergencyContact" rows="3" name="emergencyContact"></textarea>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </form>  
+        <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" id="submitInsertBtn">Save changes</button>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+@section Scripts{
+<script>
+    
+const parent = this;
+var pageNumber = 1;
+var pageSize =  10;
+var searchString = ""
+var invalidFields = [];
+var isFormChanged = false;
+
+$(document).ready(function(){
+    $("result-count").hide();
+
+    parent.fetchList();
+
+    $("#searchBtn").click(function(){
+        searchString = $("#searchField").val();
+        pageNumber = 1;  
+
+        parent.fetchList();        
+    });
+
+   
+});
+
+
+$(".required-field").on('keyup keypress blur change', function(e) {
+    // e.type is the type of event fired
+    let target = e.target;
+    parent.invalidFields  = []
+
+ 
+    let value = target.value;
+    if(value == null || value == ''){
+        $(`#${target.id}`).addClass("is-invalid");
+    }else{
+        $(`#${target.id}`).removeClass("is-invalid");
+    }
+
+    parent.isFormChanged = true;
+    parent.getInvalidFields();
+});
+
+function getInvalidFields(){
+    parent.invalidFields  = []
+
+    var fields = $(".form-fields");
+
+    fields.each(function( index ) {
+        let itemField = $( this );
+        console.log("getInvalidFields")
+      
+        itemField.removeClass("is-invalid");
+
+     
+        if(itemField.hasClass("required-field")){
+            let value = itemField[0].value;
+            if(value == null || value == ''){
+                itemField.addClass("is-invalid");
+            }else{
+                itemField.removeClass("is-invalid");
+            }
+        }
+
+
+        if(itemField.hasClass("is-invalid")){
+            parent.invalidFields.push(itemField[0].name)
+        }
+    });
+
+}
+
+$("#submitInsertBtn").click(function(){
+    parent.getInvalidFields();
+  if(parent.invalidFields.length || !isFormChanged){
+      let alertMessage = "Please fill up the required fields!\n";
+      parent.invalidFields.forEach(item => {
+          alertMessage += `${item}\n`
+      })
+       alert(alertMessage) 
+
+       return;
+  }
+
+  let payload = $("#addEmployeeForm").serializeArray();
+
+ 
+    $.ajax({
+        headers: { 
+            'Accept': 'application/json',
+            'Content-Type': 'application/json' 
+        },
+        type: 'POST',
+        url: "@employeeEndpoint",
+        data: JSON.stringify(payload),
+        dataType: 'json',
+        success: (resp) => {
+            if(resp){
+                alert("New Employee Succssfully Saved!")
+                location.reload();
+            }
+        },
+        error: (err) => {
+               alert(err.responseText)        
+        }
+    });
+
+});
+
+function fetchList(){    
+    $.getJSON("@employeeEndpoint/list" + `?pageNumber=${pageNumber}&pagesize=${pageSize}&searchString=${searchString}`, function(result){
+        console.log(result)
+        if(result){
+            var itemCount = result.dataList.length
+            parent.setPaging(result.pageNumber, itemCount, result.totalCount)
+            parent.generateTableRow(result.dataList);            
+        }
+  });
+}
+
+
+
+
+
+function generateTableRow(data){
+    $("#table-body").empty();
+
+          data.forEach( item => {
+           var element = `<tr>
+                                <td>${item.name}</td>
+                                <td>${item.email}</td> 
+                                <td>${item.employeeNumber}</td>
+                                <td class="col-md-1">
+                                    <div class="btn-group" role="group" >
+                                      <button type="button" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="View" onclick="viewEmployee('${item.id}')">
+                                          <i class="far fa-file-alt text-light"></i>
+                                      </button>
+                                      <button type="button" class="btn btn-warning" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Edit" onclick="updateEmployee('${item.id}')">
+                                          <i class="far fa-edit text-light"></i>
+                                      </button>
+                                      <button type="button" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Archive" onclick="deleteEmployee('${item.id}')">
+                                          <i class="far fa-trash-alt text-light"></i>
+                                      </button>
+                                    </div>
+
+                                </td>
+                        </tr>`;
+ 
+        $("#table-body").append(element);
+       });
+
+}
+
+function goToPage(index){
+        searchString = $("#searchField").val();
+        pageNumber = index;  
+
+        parent.fetchList();        
+
+} 
+
+function updateEmployee(id){
+    console.log(id)
+    let link = '/home/update/' + id;
+    window.location.href=link;
+}
+
+
+function viewEmployee(id){
+    console.log(id)
+    let link = '/home/view/' + id;
+    window.location.href=link;
+}
+
+function deleteEmployee(id){
+
+        $.ajax({
+        headers: { 
+            'Accept': 'application/json',
+            'Content-Type': 'application/json' 
+        },
+        type: 'DELETE',
+        url: "@employeeEndpoint" + "/" + id,
+        dataType: 'json',
+        success: (resp) => {
+            if(resp){
+                alert("Employee Succssfully Archived!")
+
+
+                 setTimeout(()=> {
+                   location.reload();          
+                 }, 1500);
+            }
+        },
+        error: (err) => {
+               alert(err.responseText)        
+        }
+    });
+}
+
+
+function setPaging(index, itemCount, totalCount){
+    $("#result-count").hide();
+    $("#result-count").empty();
+
+    totalCount = totalCount != null ? totalCount : 0;
+
+    if(totalCount == 0) return;
+
+    $("#result-count").show();
+
+
+    let message = "Showing " + itemCount + " of " + totalCount;
+    $("#result-count").append(message);
+
+
+
+    const totalItemCount = totalCount
+    const currentpageNumber = index
+
+    const paginationContainer = $('#pagination'); // Use jQuery to select the container
+    paginationContainer.empty();
+
+    const numPagesToShow = 5; // Number of pages to show on each side of the current page
+
+    // Calculate the total number of pages based on itemCount and pageSize
+    const totalPages = Math.ceil(totalItemCount / pageSize);
+
+    // Calculate the starting and ending page numbers
+    let startPage = Math.max(1, currentpageNumber - numPagesToShow);
+    let endPage = Math.min(totalPages, currentpageNumber + numPagesToShow);
+
+    if (currentpageNumber <= numPagesToShow) {
+        endPage = Math.min(numPagesToShow * 2 + 1, totalPages);
+    }
+    if (currentpageNumber >= totalPages - numPagesToShow) {
+        startPage = Math.max(totalPages - numPagesToShow * 2, 1);
+    }
+
+    // Disable "Previous" button if on the first page or no results for previous page
+    if (currentpageNumber > 1 && itemCount > 0) {
+        paginationContainer.append(`<li class="page-item">
+            <a id="prevBtn" class="page-link" href="#" aria-label="Previous" onclick="goToPage(${currentpageNumber - 1})">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>`);
+    } else {
+        paginationContainer.append(`<li class="page-item disabled">
+            <span class="page-link">&laquo;</span>
+        </li>`);
+    }
+
+    // Render the page numbers
+    for (let i = startPage; i <= endPage; i++) {
+        const disabled = i > totalPages || (i - 1) * pageSize >= totalItemCount;
+        if (i === currentpageNumber) {
+            paginationContainer.append(`<li class="page-item active"><span class="page-link">${i}</span></li>`);
+        } else if (disabled) {
+            paginationContainer.append(`<li class="page-item disabled"><span class="page-link">${i}</span></li>`);
+        } else {
+            paginationContainer.append(`<li class="page-item"><a class="page-link" href="#" onclick="goToPage(${i})">${i}</a></li>`);
+        }
+    }
+
+    // Disable "Next" button if on the last page or no results for next page
+    if (currentpageNumber < totalPages && itemCount > 0) {
+        paginationContainer.append(`<li class="page-item">
+            <a id="nextBtn" class="page-link" href="#" aria-label="Next" onclick="goToPage(${currentpageNumber + 1})">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>`);
+    } else {
+        paginationContainer.append(`<li class="page-item disabled">
+            <span class="page-link">&raquo;</span>
+        </li>`);
+    }
+  
+
+}
+
+</script>
+
+
+}
